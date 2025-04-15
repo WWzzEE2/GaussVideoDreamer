@@ -1,1 +1,379 @@
-<h1> Hello World! </h1>
+
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>GaussVideoDreamer</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1711">
+    <meta property="og:image:height" content="576">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GaussVideoDreamer" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GaussVideoDreamer" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
+    <link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="css/fontawesome.all.min.css">
+	<link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+
+	<!-- Google tag (gtag.js) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+	<script defer src="js/fontawesome.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script src="js/synced_video_selector.js"></script>
+
+</head>
+
+<body style="padding: 0%; width: 100%">
+    <div class="desktop-content">
+        <div class="container-fluid">
+            <div class="row py-5 mt-5" style="background-color: grey;">
+                <div class="col-2"></div>
+                <div class="col-md-8">
+                <div class="text-center">
+                <h1 style="font-size: 48px; color:white"><b>GaussVideoDreamer</b></h1>  
+                <h1 style="font-size: 36px; color:white">3D Scene Generation with Video Diffusion and Inconsistency-Aware Gaussian Splatting</h1>          
+                <p class="text-justify" style="font-size: 24px; color:white">
+                    <a style="color:white">Junlin Hao</a>, 
+                    <a style="color:white">Peiheng Wang</a>, 
+                    <a style="color:white">Haoyang Wang</a>, 
+                    <a style="color:white">Xinggong Zhang</a>, 
+                    <a style="color:white">Zongming Guo<sup>&dagger;</sup></a>
+                </p>   
+                <p class="text-justify" style="font-size: 18px; color:white">Peking University</p>   
+                
+                <div class="row justify-content-center">
+                    <div class="col-12 h3">
+                        <a href="https://arxiv.org/abs/2504.10001" class="btn btn-outline-light" role="button" style="font-size: 20px;" >arXiv</a>
+                        <a href="." class="btn btn-outline-light" role="button" style="font-size: 20px;">Code (Coming Soon)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row py-5 mt-5 bg-dark">
+            <div class="col-2"></div>
+            <div class="col-md-8">
+                
+                <h1 class="text-center pb-2 text-white">
+                <p class="text-justify" style="font-size: 28px;">Scene Reconstruction from a Single Image</p>
+                <p class="text-justify" style="font-size: 24px;">RGB Renderings (Left) & Depth Renderings (Right) of the Scene reconstructed from a Single Image (below)</p>
+                </h1><br>
+
+                <script>
+                    activeMethodPill = "gaussvideodream"
+                    activeScenePill = document.querySelector('.scene-pill.active-pill');
+                    activeModePill = document.querySelector('.mode-pill.active-pill');
+                </script>
+                
+                <div class="text-center">
+                    <div class="video-container">
+                        <video class="video" style="height: 480px; max-width: 46%;" m id="compVideo0" loop playsinline autoplay muted>
+                            <source src="visual/rgb/bathroom.mp4" />
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video class="video" style="height: 480px; max-width: 46%;" id="compVideo1" loop playsinline autoplay muted>
+                            <source src="visual/dpt/bathroom.mp4" />
+                        </video>
+                    </div>
+                    
+                    <br>
+                    <script>
+                        video0 = document.getElementById("compVideo0");
+                        video1 = document.getElementById("compVideo1");
+                    </script>
+
+                    <div class="pill-row scene-pills" id="scene-pills">
+                        <span class="pill scene-pill" data-value="arcade" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/arcade.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="astronaut2" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/astronaut2.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill active" data-value="bathroom" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bathroom.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="bear" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bear.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="bedroom" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bedroom.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="boat" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/boat.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="bohemian" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bohemian.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="bust" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bust.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="car" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/car.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="forest" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/forest.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="japan" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/japan.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="kitchen" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/kitchen.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="lavender" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/lavender.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="lighthouse" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/lighthouse.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="living_room" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/living_room.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="piano" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/piano.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="resolute" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/resolute.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="steampunk" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/steampunk.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="surf" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/surf.png" alt=fn width="72">
+                        </span> 
+                        <span class="pill scene-pill" data-value="victorian" onclick="selectRGBDvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/victorian.png" alt=fn width="72">
+                        </span> 
+                    </div>
+
+                    <script>
+                        activeMethodPill = document.querySelector('.method-pill.active-pill');
+                        activeScenePill = document.querySelector('.scene-pill.active-pill');
+                        activeModePill = document.querySelector('.mode-pill.active-pill');
+                    </script>
+                </div>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+    <div class="content">
+        <div class="row py-5 mt-5 bg-dark">
+            <div class="col-2"></div>
+            <div class="col-md-8">
+                <h1 class="text-center pb-2 text-white">
+                <p class="text-justify" style="font-size: 28px;">Abstract</p>
+                </h1><br>
+    
+                <p class="text-justify" style="font-size: 20px;">
+                    Single-image 3D scene reconstruction presents significant challenges due to its inherently ill-posed nature and limited input constraints. Recent advances have explored two promising directions:
+                    <b>multiview generative models</b> that train on 3D consistent datasets but struggle with out-of-distribution generalization, and
+                    <b>3D scene inpainting and completion</b> frameworks that suffer from cross-view inconsistency and suboptimal error handling, as they depend exclusively on depth data or 3D smoothness, which ultimately degrades output quality and computational performance.
+                    Building upon these approaches, we present <b>GaussVideoDreamer</b>, which advances generative multimedia approaches by bridging the gap between image, video, and 3D generation, integrating their strengths through two key innovations: 
+                    (1) A progressive video inpainting strategy that harnesses temporal coherence for improved multiview consistency and faster convergence. 
+                    (2) A 3D Gaussian Splatting consistency mask to guide the video diffusion with 3D consistent multiview evidence. 
+                    Our pipeline combines three core components: a geometry-aware initialization protocol, Inconsistency-Aware Gaussian Splatting, and a progressive video inpainting strategy.
+                    Experimental results demonstrate that our approach achieves 32% higher LLaVA-IQA scores and at least 2x speedup compared to existing methods while maintaining robust performance across diverse scenes.
+                </p>   
+
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+    <div class="row py-5 mt-5 bg-dark">
+        <div class="col-2"></div>
+        <div class="col-md-8">
+            
+            <h1 class="text-center pb-2 text-white">
+            <p class="text-justify" style="font-size: 28px;">Coarse Gaussian Field</p> 
+            <p class="text-justify" style="font-size: 24px;">Coarse Scene (Left) v.s. Refined Scene (Right)</p> 
+            </h1><br>
+
+            <script>
+                activeMethodPill = "gaussvideodream"
+                activeScenePill = document.querySelector('.scene-pill.active-pill');
+                activeModePill = document.querySelector('.mode-pill.active-pill');
+            </script>
+            
+            <div class="text-center">
+                <div class="video-container">
+                    <video class="video" style="height: 480px; max-width: 46%;" m id="compVideo2" loop playsinline autoplay muted>
+                        <source src="visual/rgb/coarse/bathroom.mp4" />
+                    </video>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <video class="video" style="height: 480px; max-width: 46%;" id="compVideo3" loop playsinline autoplay muted>
+                        <source src="visual/rgb/bathroom.mp4" />
+                    </video>
+                </div>
+
+                <br>
+                <script>
+                    video2 = document.getElementById("compVideo2");
+                    video3 = document.getElementById("compVideo3");
+                </script>
+
+                <div class="pill-row scene-pills" id="scene-pills">
+                    <span class="pill scene-pill" data-value="astronaut2" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/astronaut2.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="bathroom" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/bathroom.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="bear" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/bear.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="boat" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/boat.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="lighthouse" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/lighthouse.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="living_room" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/living_room.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="resolute" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/resolute.png" alt=fn width="72">
+                    </span>
+                    <span class="pill scene-pill" data-value="steampunk" onclick="selectC2Fvideos(activeMethodPill, this, 3)">
+                        <img class="thumbnail-img" src="visual/thumbnails/steampunk.png" alt=fn width="72">
+                    </span>
+                </div>
+
+                <script>
+                    activeMethodPill = document.querySelector('.method-pill.active-pill');
+                    activeScenePill = document.querySelector('.scene-pill.active-pill');
+                    activeModePill = document.querySelector('.mode-pill.active-pill');
+                </script>
+            </div>
+
+        </div>
+        <div class="col-2"></div>
+    </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row py-5 mt-5 bg-dark">
+            <div class="col-2"></div>
+            <div class="col-md-8">
+                
+                <h1 class="text-center pb-2 text-white">
+                <p class="text-justify" style="font-size: 28px;">Ablation Study on IA-GS</p> 
+                <p class="text-justify" style="font-size: 24px;">w/o IA-GS (Left) v.s. with IA-GS (Right)</p> 
+                </h1><br>
+    
+                <script>
+                    activeMethodPill = "gaussvideodream"
+                    activeScenePill = document.querySelector('.scene-pill.active-pill');
+                    activeModePill = document.querySelector('.mode-pill.active-pill');
+                </script>
+                
+                <div class="text-center">
+                    <div class="video-container">
+                        <video class="video" style="height: 480px; max-width: 46%;" m id="compVideo4" loop playsinline autoplay muted>
+                            <source src="visual/rgb/no_mlp/astronaut2.mp4" />
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video class="video" style="height: 480px; max-width: 46%;" id="compVideo5" loop playsinline autoplay muted>
+                            <source src="visual/rgb/astronaut2.mp4" />
+                        </video>
+                    </div>
+    
+                    <br>
+                    <script>
+                        video4 = document.getElementById("compVideo4");
+                        video5 = document.getElementById("compVideo5");
+                    </script>
+    
+                    <div class="pill-row scene-pills" id="scene-pills">
+                        <span class="pill scene-pill" data-value="bust" onclick="selectIAGSvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/bust.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="car" onclick="selectIAGSvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/car.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="japan" onclick="selectIAGSvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/japan.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="lighthouse" onclick="selectIAGSvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/lighthouse.png" alt=fn width="72">
+                        </span>
+                        <span class="pill scene-pill" data-value="surf" onclick="selectIAGSvideos(activeMethodPill, this, 3)">
+                            <img class="thumbnail-img" src="visual/thumbnails/surf.png" alt=fn width="72">
+                        </span>
+                    </div>
+    
+                    <script>
+                        activeMethodPill = document.querySelector('.method-pill.active-pill');
+                        activeScenePill = document.querySelector('.scene-pill.active-pill');
+                        activeModePill = document.querySelector('.mode-pill.active-pill');
+                    </script>
+                </div>
+    
+            </div>
+            <div class="col-2"></div>
+        </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="content">
+                <div class="row py-5 mt-5 bg-dark">
+                    <div class="col-2"></div>
+                    <div class="col-md-8">
+                        <p class="text-center" style="font-size: 22px;">Table 1 Quantitative evaluations on renderings from the scenes
+                        <img src="visual/result/quantitative.png" align=center width="85%"> </p>
+        
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="content">
+                <div class="row py-5 mt-5 bg-dark">
+                    <div class="col-2"></div>
+                    <div class="col-md-8">
+                        <h1 class="text-center pb-2 text-white">
+                        <p class="text-left" style="font-size: 20px;"> 
+                            We borrow this website template from 
+                            <a href="https://realmdreamer.github.io/" style="color:yellow"> RealmDreamer</a> and
+                            <a href="https://https://vistadream-project-page.github.io/" style="color:yellow"> VistaDreamer</a>.
+                        </p>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+        </div>
+
+</body>
+</html>
